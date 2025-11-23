@@ -140,13 +140,38 @@
         return { valid: false, reason: 'format' };
       }
 
+      // Extract domain once for further checks
+      var atIndex = value.lastIndexOf('@');
+      if (atIndex === -1) {
+        return { valid: false, reason: 'format' };
+      }
+      var domain = value.slice(atIndex + 1).toLowerCase();
+
+      // Detect common typo domains (e.g. "gnail.com" instead of "gmail.com")
+      // We don't auto-correct, but we do treat them as invalid so the user fixes them.
+      var typoDomains = {
+        // Gmail typos
+        'gnail.com': 'gmail.com',
+        'gamil.com': 'gmail.com',
+        'gmai.com': 'gmail.com',
+        'gmal.com': 'gmail.com',
+        'gmail.con': 'gmail.com',
+        // Hotmail / Outlook typos
+        'hotnail.com': 'hotmail.com',
+        'hotmai.com': 'hotmail.com',
+        'hotmail.con': 'hotmail.com',
+        'outlok.com': 'outlook.com',
+        'outllok.com': 'outlook.com',
+        // Yahoo typos
+        'yaho.com': 'yahoo.com',
+        'yhoo.com': 'yahoo.com'
+      };
+      if (typoDomains[domain]) {
+        return { valid: false, reason: 'format' };
+      }
+
       // Optional: business-only emails via data-business-email-only="true"
       if (field.hasAttribute('data-business-email-only')) {
-        var atIndex = value.lastIndexOf('@');
-        if (atIndex === -1) {
-          return { valid: false, reason: 'format' };
-        }
-        var domain = value.slice(atIndex + 1).toLowerCase();
         // Common free email providers to block
         var freeDomains = [
           'gmail.com',
