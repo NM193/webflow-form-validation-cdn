@@ -272,6 +272,15 @@
     var gateButtons = form.querySelectorAll('[data-gate-btn], [gate-btn]');
     gateButtons.forEach(function (btn) {
       btn.addEventListener('click', function (event) {
+        // Helpful for debugging to ensure the CDN script version is actually running
+        // and the correct gate button is wired.
+        // You can remove this console.log later if you want a clean console.
+        console.log('[webflow-validation] gate button clicked', {
+          formId: form.id,
+          formName: form.getAttribute('name'),
+          gateButton: btn
+        });
+
         event.preventDefault();
         event.stopPropagation();
 
